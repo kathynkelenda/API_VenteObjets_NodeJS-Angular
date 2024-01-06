@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 //Création de l'application express === Création d'une constante qui contiendra l'application (5) 
 const app = express();
+//Permet l'accès au path du serveur
+const path = require('path')
 
 //Importation des routeurs
 const stuffRoutes = require('./routes/stuff');
@@ -44,6 +46,11 @@ app.use('/api/stuff',stuffRoutes) /*Pr cette route, on used le router exposé pa
                                    exporté ds le fichier stuff.js */
   //Racine de ttes les routes liées à l'authentification = /api/auth
 app.use('/api/auth',userRoutes)
+
+//Gestionnaire de routage add pr la gestion des fichiers
+  /*Indik à express de gérer la ressource images de façon statique( un sous-répertoire de notre
+    répertoire de base, __dirname ) à chak fois k'elle reçoit une requête vers la route image.*/
+    app.use('/images',express.static(path.join(__dirname,'images')));
 
 
 //export de la constante = appli pr pouvoir y acceder depuis les autres fichiers du projet.()

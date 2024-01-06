@@ -5,27 +5,29 @@ const thingSchema = require('../models/Thing');
 
 //POST
 exports.createThing = (req,res,next)=>{
+   //On parse l'objet
+    const thingObject = JSON.parse(req.body.thing);
+    //On y supprimer l'id car sera généré automatiquement par la bdd
+    delete thingObject._id;
+    //On y supprime l'id du créateur de l'objet. On va used l'userId du token d'auth
+    delete thingObject._userId;
 
-    delete req.body._id; //On supprime d'abord l'id car le frontend actuel contient un id, alors que ce dernier sera généré automatiquement par mongo.
-    
-    //Les requetes arrivant à cette route ont ds leur corps ttes les infos du nouvel élément qui sera ajouté à la bdd
+    //Création de l'objet
     const thing = new thingSchema({
-        // title: req.body.title,
-        // descrption: req.body.description,
-        // imageUrl: req.body.imageUrl,
-        // price: req.body.price,
-        // userId: req.body.userId,
-         ...req.body //Raccourci qui copie ts les éléments contenus ds le corps de la requête.     
-    });
+      ...thingObject,
+      //Extraction de l'userId de l'objet requete
+      userId: req.auth.userId,
+      //Génération de l'url de l'image
+      imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    }) ;
 
     //Enregistrement ds la bdd
     thing.save()
-        .then( () => { res.status(201).json({message: 'Objet enregistré'}) })
-        .catch( (error) => {
-          /*console.log(error);*/
-          res.status(400).json({error: error}) 
-        })
+     .then(()=>{res.status(201).json({message: 'Objet enregistré'})})
+     .catch(error => res.status(400).json({error}))
+      
 }
+
 
 //GET ONE
 exports.getOneThing = (req,res,next) =>{

@@ -4,6 +4,9 @@ const express = require('express');
 //Import middleware d'authentification
 const auth = require('../middleware/auth')
 
+//Import de multer
+const multer = require('../middleware/multer-config.js');
+
 //Création du routeur
 const router = express.Router(); /**On créer un routeur avec la meth routeur() d'express */
 
@@ -17,13 +20,13 @@ auth est importé ds le routeur pr etre exécuté avant les gestionnaires de nos
 router.post('/', auth, stuffContoller.createThing); 
 
   // READ ONE 
-router.get('/:id', auth,  stuffContoller.getOneThing);      
+router.get('/:id', auth, multer, stuffContoller.getOneThing);      
 
   //READ ALL
 router.get('/', auth, stuffContoller.getAllThing);
 
   //UPDATE 
-router.put('/:id', auth, stuffContoller.modifyThing)
+router.put('/:id', auth, multer, stuffContoller.modifyThing)
 
   //DELETE
 router.delete('/:id', auth, stuffContoller.deleteThing)
